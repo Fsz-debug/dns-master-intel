@@ -1,0 +1,301 @@
+{
+  "mode": "intel_only",
+  "description": "Firebog feeds are used as intelligence/reference sources, not blindly merged into the blocking output.",
+  "sources": [
+    {
+      "category": "suspicious",
+      "url": "https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt",
+      "name": "suspicious-00-raw.githubusercontent.com"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts",
+      "name": "suspicious-01-raw.githubusercontent.com"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://v.firebog.net/hosts/static/w3kbl.txt",
+      "name": "suspicious-02-v.firebog.net"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://raw.githubusercontent.com/matomo-org/referrer-spam-blacklist/master/spammers.txt",
+      "name": "suspicious-03-raw.githubusercontent.com"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://someonewhocares.org/hosts/zero/hosts",
+      "name": "suspicious-04-someonewhocares.org"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://raw.githubusercontent.com/RooneyMcNibNug/pihole-stuff/master/SNAFU.txt",
+      "name": "suspicious-05-raw.githubusercontent.com"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://hostsfile.mine.nu/hosts0.txt",
+      "name": "suspicious-06-hostsfile.mine.nu"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://paulgb.github.io/BarbBlock/blacklists/hosts-file.txt",
+      "name": "suspicious-07-paulgb.github.io"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://hostsfile.org/Downloads/hosts.txt",
+      "name": "suspicious-08-hostsfile.org"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://www.joewein.net/dl/bl/dom-bl-base.txt",
+      "name": "suspicious-09-joewein.net"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://v.firebog.net/hosts/Kowabit.txt",
+      "name": "suspicious-10-v.firebog.net"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://v.firebog.net/hosts/neohostsbasic.txt",
+      "name": "suspicious-11-v.firebog.net"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://adblock.mahakala.is",
+      "name": "suspicious-12-adblock.mahakala.is"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://winhelp2002.mvps.org/hosts.txt",
+      "name": "suspicious-13-winhelp2002.mvps.org"
+    },
+    {
+      "category": "suspicious",
+      "url": "https://raw.githubusercontent.com/VeleSila/yhosts/master/hosts",
+      "name": "suspicious-14-raw.githubusercontent.com"
+    },
+    {
+      "category": "advertising",
+      "url": "https://adaway.org/hosts.txt",
+      "name": "advertising-15-adaway.org"
+    },
+    {
+      "category": "advertising",
+      "url": "https://v.firebog.net/hosts/AdguardDNS.txt",
+      "name": "advertising-16-v.firebog.net"
+    },
+    {
+      "category": "advertising",
+      "url": "https://v.firebog.net/hosts/Admiral.txt",
+      "name": "advertising-17-v.firebog.net"
+    },
+    {
+      "category": "advertising",
+      "url": "https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt",
+      "name": "advertising-18-raw.githubusercontent.com"
+    },
+    {
+      "category": "advertising",
+      "url": "https://v.firebog.net/hosts/Easylist.txt",
+      "name": "advertising-19-v.firebog.net"
+    },
+    {
+      "category": "advertising",
+      "url": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext",
+      "name": "advertising-20-pgl.yoyo.org"
+    },
+    {
+      "category": "advertising",
+      "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/UncheckyAds/hosts",
+      "name": "advertising-21-raw.githubusercontent.com"
+    },
+    {
+      "category": "advertising",
+      "url": "https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts",
+      "name": "advertising-22-raw.githubusercontent.com"
+    },
+    {
+      "category": "advertising",
+      "url": "https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt",
+      "name": "advertising-23-s3.amazonaws.com"
+    },
+    {
+      "category": "advertising",
+      "url": "https://raw.githubusercontent.com/jdlingyu/ad-wars/master/hosts",
+      "name": "advertising-24-raw.githubusercontent.com"
+    },
+    {
+      "category": "tracking",
+      "url": "https://v.firebog.net/hosts/Easyprivacy.txt",
+      "name": "tracking-25-v.firebog.net"
+    },
+    {
+      "category": "tracking",
+      "url": "https://v.firebog.net/hosts/Prigent-Ads.txt",
+      "name": "tracking-26-v.firebog.net"
+    },
+    {
+      "category": "tracking",
+      "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.2o7Net/hosts",
+      "name": "tracking-27-raw.githubusercontent.com"
+    },
+    {
+      "category": "tracking",
+      "url": "https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt",
+      "name": "tracking-28-raw.githubusercontent.com"
+    },
+    {
+      "category": "tracking",
+      "url": "https://hostfiles.frogeye.fr/firstparty-trackers-hosts.txt",
+      "name": "tracking-29-hostfiles.frogeye.fr"
+    },
+    {
+      "category": "tracking",
+      "url": "https://www.github.developerdan.com/hosts/lists/ads-and-tracking-extended.txt",
+      "name": "tracking-30-github.developerdan.com"
+    },
+    {
+      "category": "tracking",
+      "url": "https://hostfiles.frogeye.fr/multiparty-trackers-hosts.txt",
+      "name": "tracking-31-hostfiles.frogeye.fr"
+    },
+    {
+      "category": "tracking",
+      "url": "https://raw.githubusercontent.com/Kees1958/W3C_annual_most_used_survey_blocklist/6b8c2411f22dda68b0b41757aeda10e50717a802/TOP_EU_US_Ads_Trackers_HOST",
+      "name": "tracking-32-raw.githubusercontent.com"
+    },
+    {
+      "category": "tracking",
+      "url": "https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/android-tracking.txt",
+      "name": "tracking-33-raw.githubusercontent.com"
+    },
+    {
+      "category": "tracking",
+      "url": "https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/SmartTV.txt",
+      "name": "tracking-34-raw.githubusercontent.com"
+    },
+    {
+      "category": "tracking",
+      "url": "https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/AmazonFireTV.txt",
+      "name": "tracking-35-raw.githubusercontent.com"
+    },
+    {
+      "category": "tracking",
+      "url": "https://gitlab.com/quidsup/notrack-blocklists/raw/master/notrack-blocklist.txt",
+      "name": "tracking-36-gitlab.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareHosts.txt",
+      "name": "malicious-37-raw.githubusercontent.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://v.firebog.net/hosts/Prigent-Crypto.txt",
+      "name": "malicious-38-v.firebog.net"
+    },
+    {
+      "category": "malicious",
+      "url": "https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Risk/hosts",
+      "name": "malicious-39-raw.githubusercontent.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://phishing.army/download/phishing_army_blocklist_extended.txt",
+      "name": "malicious-40-phishing.army"
+    },
+    {
+      "category": "malicious",
+      "url": "https://gitlab.com/quidsup/notrack-blocklists/raw/master/notrack-malware.txt",
+      "name": "malicious-41-gitlab.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://raw.githubusercontent.com/Spam404/lists/master/main-blacklist.txt",
+      "name": "malicious-42-raw.githubusercontent.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://raw.githubusercontent.com/AssoEchap/stalkerware-indicators/master/generated/hosts",
+      "name": "malicious-43-raw.githubusercontent.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://urlhaus.abuse.ch/downloads/hostfile/",
+      "name": "malicious-44-urlhaus.abuse.ch"
+    },
+    {
+      "category": "malicious",
+      "url": "https://lists.cyberhost.uk/malware.txt",
+      "name": "malicious-45-lists.cyberhost.uk"
+    },
+    {
+      "category": "malicious",
+      "url": "https://malware-filter.gitlab.io/malware-filter/phishing-filter-hosts.txt",
+      "name": "malicious-46-malware-filter.gitlab.io"
+    },
+    {
+      "category": "malicious",
+      "url": "https://v.firebog.net/hosts/Prigent-Malware.txt",
+      "name": "malicious-47-v.firebog.net"
+    },
+    {
+      "category": "malicious",
+      "url": "https://raw.githubusercontent.com/jarelllama/Scam-Blocklist/main/lists/wildcard_domains/scams.txt",
+      "name": "malicious-48-raw.githubusercontent.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://v.firebog.net/hosts/RPiList-Malware.txt",
+      "name": "malicious-49-v.firebog.net"
+    },
+    {
+      "category": "malicious",
+      "url": "https://v.firebog.net/hosts/RPiList-Phishing.txt",
+      "name": "malicious-50-v.firebog.net"
+    },
+    {
+      "category": "malicious",
+      "url": "https://bitbucket.org/ethanr/dns-blacklists/raw/8575c9f96e5b4a1308f2f12394abd86d0927a4a0/bad_lists/Mandiant_APT1_Report_Appendix_D.txt",
+      "name": "malicious-51-bitbucket.org"
+    },
+    {
+      "category": "malicious",
+      "url": "https://osint.digitalside.it/Threat-Intel/lists/latestdomains.txt",
+      "name": "malicious-52-osint.digitalside.it"
+    },
+    {
+      "category": "malicious",
+      "url": "https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt",
+      "name": "malicious-53-s3.amazonaws.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://raw.githubusercontent.com/tg12/pihole-phishtank-list/master/list/phish_domains.txt",
+      "name": "malicious-54-raw.githubusercontent.com"
+    },
+    {
+      "category": "malicious",
+      "url": "https://raw.githubusercontent.com/HorusTeknoloji/TR-PhishingList/master/url-lists.txt",
+      "name": "malicious-55-raw.githubusercontent.com"
+    },
+    {
+      "category": "other",
+      "url": "https://raw.githubusercontent.com/chadmayfield/my-pihole-blocklists/master/lists/pi_blocklist_porn_top1m.list",
+      "name": "other-56-raw.githubusercontent.com"
+    },
+    {
+      "category": "other",
+      "url": "https://v.firebog.net/hosts/Prigent-Adult.txt",
+      "name": "other-57-v.firebog.net"
+    },
+    {
+      "category": "other",
+      "url": "https://raw.githubusercontent.com/anudeepND/blacklist/master/facebook.txt",
+      "name": "other-58-raw.githubusercontent.com"
+    }
+  ]
+}

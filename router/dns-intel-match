@@ -1,0 +1,27 @@
+#!/bin/sh
+# Compare pending domains against ALL local intelligence feeds already built on GitHub.
+# Does not block anything.
+
+set -eu
+BASE="/etc/dns-master"
+PENDING="$BASE/review-pending.txt"
+INTEL="$BASE/firebog-intel.txt"
+MATCHED="$BASE/review-firebog-hit.txt"
+UNMATCHED="$BASE/review-no-firebog-hit.txt"
+
+touch "$PENDING"
+
+if [ ! -s "$INTEL" ]; then
+    echo "Missing or empty $INTEL" >&2
+    exit 1
+fi
+
+sort -u "$PENDING" -o "$PENDING"
+sort -u "$INTEL" -o "$INTEL"
+
+comm -12 "$PENDING" "$INTEL" > "$MATCHED"
+comm -23 "$PENDING" "$INTEL" > "$UNMATCHED"
+
+echo "Pending:        $(wc -l < "$PENDING" | tr -d ' ')"
+echo "Firebog hit:   $(wc -l < "$MATCHED" | tr -d ' ')"
+echo "No Firebog hit:$(wc -l < "$UNMATCHED" | tr -d ' ')"

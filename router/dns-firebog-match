@@ -1,0 +1,16 @@
+#!/bin/sh
+# Classify local candidates against a downloaded Firebog intel file.
+set -eu
+BASE="/etc/dns-master"
+CAND="$BASE/candidates.txt"
+INTEL="$BASE/firebog-intel.txt"
+OUT="$BASE/candidates-firebog.txt"
+
+[ -s "$CAND" ] || { : > "$OUT"; exit 0; }
+[ -s "$INTEL" ] || { echo "Missing $INTEL" >&2; exit 1; }
+
+sort -u "$CAND" -o "$CAND"
+sort -u "$INTEL" -o "$INTEL"
+comm -12 "$CAND" "$INTEL" > "$OUT"
+
+echo "Firebog matched candidates: $(wc -l < "$OUT" | tr -d ' ')"

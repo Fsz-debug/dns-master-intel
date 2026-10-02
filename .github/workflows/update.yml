@@ -1,0 +1,39 @@
+name: Update blocklists
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Build
+        run: python3 src/build.py
+
+      - name: Commit updated outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist/
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "chore: update generated blocklists"
+            git push
+          fi

@@ -1,0 +1,59 @@
+#!/bin/sh
+# Look up one observed domain in the full intelligence release.
+# It downloads only ONE of 256 compressed shards and caches it temporarily.
+#
+# /etc/dns-master/intel.conf:
+# INTEL_BASE_URL='https://github.com/OWNER/REPO/releases/download/intel-latest'
+# CACHE_HOURS='24'
+
+set -eu
+BASE="/etc/dns-master"
+CONF="$BASE/intel.conf"
+CACHE="/tmp/dns-intel-cache"
+
+[ -r "$CONF" ] || { echo "Missing $CONF" >&2; exit 1; }
+# shellcheck disable=SC1090
+. "$CONF"
+: "${INTEL_BASE_URL:?Missing INTEL_BASE_URL}"
+CACHE_HOURS="${CACHE_HOURS:-24}"
+
+[ $# -eq 1 ] || { echo "Usage: dns-intel-check domain.com"; exit 1; }
+d="$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -e 's/^\*\.//' -e 's/\.$//')"
+
+command -v sha256sum >/dev/null 2>&1 || { echo "sha256sum required" >&2; exit 1; }
+command -v curl >/dev/null 2>&1 || { echo "curl required" >&2; exit 1; }
+command -v gzip >/dev/null 2>&1 || { echo "gzip required" >&2; exit 1; }
+
+prefix="$(printf '%s' "$d" | sha256sum | cut -c1-2)"
+mkdir -p "$CACHE"
+file="$CACHE/$prefix.tsv.gz"
+
+refresh=1
+if [ -s "$file" ]; then
+    now="$(date +%s)"
+    mtime="$(date -r "$file" +%s 2>/dev/null || echo 0)"
+    age=$((now - mtime))
+    [ "$age" -lt $((CACHE_HOURS * 3600)) ] && refresh=0
+fi
+
+if [ "$refresh" -eq 1 ]; then
+    curl -fLsS --connect-timeout 15 --max-time 60 \
+      "$INTEL_BASE_URL/$prefix.tsv.gz" -o "$file.tmp"
+    mv "$file.tmp" "$file"
+fi
+
+line="$(gzip -dc "$file" | awk -F '\t' -v q="$d" '$1==q {print; exit}')"
+if [ -z "$line" ]; then
+    echo "NOT FOUND: $d"
+    exit 1
+fi
+
+domain="$(printf '%s\n' "$line" | cut -f1)"
+flags="$(printf '%s\n' "$line" | cut -f2)"
+count="$(printf '%s\n' "$line" | cut -f3)"
+mask="$(printf '%s\n' "$line" | cut -f4)"
+
+echo "FOUND: $domain"
+echo "Categories: $flags   [S=suspicious A=ads T=tracking M=malicious O=other]"
+echo "Matched sources: $count"
+echo "Source mask: $mask"

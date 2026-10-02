@@ -1,0 +1,42 @@
+{
+  "sources": [
+    {
+      "name": "hagezi-pro",
+      "enabled": true,
+      "role": "base",
+      "format": "wildcard_domains",
+      "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/pro-onlydomains.txt"
+    },
+    {
+      "name": "hagezi-tif-mini",
+      "enabled": true,
+      "role": "security",
+      "format": "wildcard_domains",
+      "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/tif.mini-onlydomains.txt"
+    },
+    {
+      "name": "hagezi-pro-plus",
+      "enabled": false,
+      "role": "alternate-base",
+      "format": "wildcard_domains",
+      "url": "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/pro.plus-onlydomains.txt",
+      "note": "Enable instead of hagezi-pro, not together."
+    },
+    {
+      "name": "stevenblack-unified",
+      "enabled": false,
+      "role": "optional-comparison",
+      "format": "hosts",
+      "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+      "note": "Disabled by default because HaGeZi already aggregates many sources."
+    },
+    {
+      "name": "oisd-big",
+      "enabled": false,
+      "role": "optional-comparison",
+      "format": "auto",
+      "url": "https://big.oisd.nl/domainswild2",
+      "note": "Disabled by default; use only after overlap/breakage testing."
+    }
+  ]
+}

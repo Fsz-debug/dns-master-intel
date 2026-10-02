@@ -1,0 +1,5 @@
+# Custom allow entries
+# Keep this file small.
+# An allow entry removes itself and its subdomains from generated block output.
+# Example:
+# api.example.com

@@ -1,0 +1,38 @@
+name: Build full intelligence
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 2 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Build all Firebog intelligence sources
+        run: |
+          rm -rf build/intel build/intel.sqlite3
+          python3 src/build_firebog_intel_v5.py
+
+      - name: Create/update rolling release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view intel-latest >/dev/null 2>&1; then
+            gh release create intel-latest \
+              --title "Latest DNS intelligence" \
+              --notes "Automatically rebuilt full intelligence reference."
+          fi
+          gh release upload intel-latest \
+            build/intel/manifest.json \
+            build/intel/shards/*.tsv.gz \
+            --clobber

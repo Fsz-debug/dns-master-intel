@@ -1,0 +1,4 @@
+# Custom block entries
+# One domain per line.
+# Example:
+# telemetry.example.com

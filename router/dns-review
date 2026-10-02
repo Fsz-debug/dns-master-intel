@@ -1,0 +1,70 @@
+#!/bin/sh
+# Review helper:
+# dns-review list
+# dns-review block example.com
+# dns-review allow example.com
+# dns-review ignore example.com
+
+set -eu
+
+BASE="/etc/dns-master"
+PENDING="$BASE/review-pending.txt"
+BLOCK="$BASE/block.txt"
+ALLOW="$BASE/allow.txt"
+IGNORED="$BASE/ignored.txt"
+
+mkdir -p "$BASE"
+touch "$PENDING" "$BLOCK" "$ALLOW" "$IGNORED"
+
+normalize_domain() {
+    printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -e 's/^\*\.//' -e 's/\.$//'
+}
+
+remove_pending() {
+    d="$1"
+    tmp="/tmp/review.$$"
+    grep -vxF "$d" "$PENDING" > "$tmp" || true
+    mv "$tmp" "$PENDING"
+}
+
+case "${1:-}" in
+    list)
+        cat "$PENDING"
+        ;;
+    count)
+        wc -l "$PENDING"
+        ;;
+    block)
+        [ $# -eq 2 ] || { echo "Usage: dns-review block domain.com"; exit 1; }
+        d="$(normalize_domain "$2")"
+        printf '%s\n' "$d" >> "$BLOCK"
+        sort -u "$BLOCK" -o "$BLOCK"
+        remove_pending "$d"
+        echo "BLOCK: $d"
+        ;;
+    allow)
+        [ $# -eq 2 ] || { echo "Usage: dns-review allow domain.com"; exit 1; }
+        d="$(normalize_domain "$2")"
+        printf '%s\n' "$d" >> "$ALLOW"
+        sort -u "$ALLOW" -o "$ALLOW"
+        remove_pending "$d"
+        echo "ALLOW: $d"
+        ;;
+    ignore)
+        [ $# -eq 2 ] || { echo "Usage: dns-review ignore domain.com"; exit 1; }
+        d="$(normalize_domain "$2")"
+        printf '%s\n' "$d" >> "$IGNORED"
+        sort -u "$IGNORED" -o "$IGNORED"
+        remove_pending "$d"
+        echo "IGNORED: $d"
+        ;;
+    *)
+        echo "Usage:"
+        echo "  dns-review list"
+        echo "  dns-review count"
+        echo "  dns-review block domain.com"
+        echo "  dns-review allow domain.com"
+        echo "  dns-review ignore domain.com"
+        exit 1
+        ;;
+esac
