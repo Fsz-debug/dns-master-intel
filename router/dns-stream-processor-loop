@@ -1,0 +1,10 @@
+#!/bin/sh
+# Process queued SSE DNS events every 10 seconds.
+
+while true; do
+    sleep 10
+
+    /usr/bin/dns-stream-process \
+        >> /tmp/dns-stream.log \
+        2>&1 || true
+done

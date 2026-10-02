@@ -1,0 +1,138 @@
+#!/bin/sh
+# Process queued NextDNS SSE events.
+# Every newly observed domain goes to review exactly once.
+# Nothing is blocked automatically.
+
+set -u
+
+BASE="/etc/dns-master"
+
+QUEUE="$BASE/stream-queue.tsv"
+OBSERVED="$BASE/observed-all.tsv"
+PENDING="$BASE/review-pending.txt"
+REVIEW_STATUS="$BASE/review-status.tsv"
+HISTORY="$BASE/history-seen.txt"
+
+BLOCK="$BASE/block.txt"
+ALLOW="$BASE/allow.txt"
+IGNORED="$BASE/ignored.txt"
+
+LOCK="/tmp/dns-stream-process.lock"
+TMP="/tmp/dns-stream-process.$$"
+
+mkdir "$LOCK" 2>/dev/null || exit 0
+
+cleanup() {
+    rm -rf "$LOCK" "$TMP".* 2>/dev/null
+}
+
+trap cleanup EXIT INT TERM
+
+mkdir -p "$BASE"
+
+touch \
+    "$QUEUE" \
+    "$OBSERVED" \
+    "$PENDING" \
+    "$REVIEW_STATUS" \
+    "$HISTORY" \
+    "$BLOCK" \
+    "$ALLOW" \
+    "$IGNORED"
+
+[ -s "$QUEUE" ] || exit 0
+
+mv "$QUEUE" "$TMP.raw"
+touch "$QUEUE"
+
+awk -F '\t' '
+{
+    d=tolower($1)
+    s=$2
+
+    sub(/^\*\./,"",d)
+    sub(/\.$/,"",d)
+
+    if (d ~ /^[a-z0-9][a-z0-9.-]*\.[a-z0-9-]+$/)
+        print d "\t" s
+}
+' "$TMP.raw" |
+sort -u > "$TMP.clean"
+
+
+cat "$TMP.clean" >> "$OBSERVED"
+
+sort -u "$OBSERVED" > "$TMP.observed"
+mv "$TMP.observed" "$OBSERVED"
+
+
+cut -f1 "$TMP.clean" |
+sort -u > "$TMP.domains"
+
+
+cat \
+    "$HISTORY" \
+    "$BLOCK" \
+    "$ALLOW" \
+    "$IGNORED" \
+    2>/dev/null |
+sed '/^[[:space:]]*$/d' |
+tr 'A-Z' 'a-z' |
+sed \
+    -e 's/^\*\.//' \
+    -e 's/\.$//' |
+sort -u > "$TMP.known"
+
+
+awk '
+FILENAME == ARGV[1] {
+    if ($0 != "")
+        known[$0]=1
+    next
+}
+
+!($0 in known) {
+    print
+}
+' "$TMP.known" "$TMP.domains" > "$TMP.new"
+
+
+COUNT="$(
+    wc -l < "$TMP.new" |
+    tr -d ' '
+)"
+
+
+if [ "$COUNT" -gt 0 ]; then
+
+    cat "$TMP.new" >> "$PENDING"
+    cat "$TMP.new" >> "$HISTORY"
+
+    awk -F '\t' '
+    FILENAME == ARGV[1] {
+        wanted[$1]=1
+        next
+    }
+
+    ($1 in wanted) {
+        print
+    }
+    ' "$TMP.new" "$TMP.clean" >> "$REVIEW_STATUS"
+
+
+    sort -u "$PENDING" > "$TMP.pending"
+    mv "$TMP.pending" "$PENDING"
+
+    sort -u "$HISTORY" > "$TMP.history"
+    mv "$TMP.history" "$HISTORY"
+
+    sort -u "$REVIEW_STATUS" > "$TMP.status"
+    mv "$TMP.status" "$REVIEW_STATUS"
+fi
+
+
+printf '%s +%s new | pending=%s | history=%s\n' \
+    "$(date '+%F %T')" \
+    "$COUNT" \
+    "$(wc -l < "$PENDING" | tr -d ' ')" \
+    "$(wc -l < "$HISTORY" | tr -d ' ')"

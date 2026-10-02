@@ -1,0 +1,90 @@
+#!/bin/sh
+# Live NextDNS SSE capture.
+# Captures every DNS event. Makes no block/allow decisions.
+
+set -u
+
+BASE="/etc/dns-master"
+CONF="$BASE/nextdns.conf"
+QUEUE="$BASE/stream-queue.tsv"
+LASTID="$BASE/last-stream-id"
+ERRLOG="/tmp/dns-stream-parse.log"
+
+[ -r "$CONF" ] || {
+    echo "Missing $CONF" >&2
+    exit 1
+}
+
+. "$CONF"
+
+: "${NEXTDNS_PROFILE_ID:?Missing NEXTDNS_PROFILE_ID}"
+: "${NEXTDNS_API_KEY:?Missing NEXTDNS_API_KEY}"
+
+mkdir -p "$BASE"
+touch "$QUEUE"
+
+while true; do
+    ID=""
+
+    [ -s "$LASTID" ] &&
+        ID="$(cat "$LASTID" 2>/dev/null || true)"
+
+    URL="https://api.nextdns.io/profiles/$NEXTDNS_PROFILE_ID/logs/stream?raw=1"
+
+    [ -n "$ID" ] &&
+        URL="$URL&id=$ID"
+
+    curl -NfsS \
+        --connect-timeout 15 \
+        -H "X-Api-Key: $NEXTDNS_API_KEY" \
+        "$URL" |
+    tr -d '\r' |
+    while IFS= read -r LINE; do
+
+        case "$LINE" in
+
+            "id: "*)
+                printf '%s\n' "${LINE#id: }" > "$LASTID.tmp"
+                mv "$LASTID.tmp" "$LASTID"
+                ;;
+
+            "data: "*)
+                JSON="${LINE#data: }"
+
+                DOMAIN="$(
+                    jsonfilter \
+                        -s "$JSON" \
+                        -e '@.domain' \
+                        2>/dev/null || true
+                )"
+
+                STATUS="$(
+                    jsonfilter \
+                        -s "$JSON" \
+                        -e '@.status' \
+                        2>/dev/null || true
+                )"
+
+                if [ -n "$DOMAIN" ]; then
+
+                    printf '%s\t%s\n' \
+                        "$DOMAIN" \
+                        "${STATUS:-unknown}" \
+                        >> "$QUEUE"
+
+                else
+                    printf '%s PARSE_FAIL %s\n' \
+                        "$(date '+%F %T')" \
+                        "$JSON" \
+                        >> "$ERRLOG"
+                fi
+                ;;
+        esac
+    done
+
+    printf '%s stream disconnected; reconnecting\n' \
+        "$(date '+%F %T')" \
+        >> "$ERRLOG"
+
+    sleep 2
+done
