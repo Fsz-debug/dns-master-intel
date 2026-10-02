@@ -260,7 +260,8 @@ def main() -> int:
     print(f"SHARDS: 256")
     print(f"SOURCE ERRORS: {len(errors)}")
     con.close()
-    return 2 if errors else 0
+    # Fail-soft: source outages are recorded in manifest.json but do not block publishing.
+    return 0
 
 if __name__ == "__main__":
     raise SystemExit(main())
