@@ -16,11 +16,17 @@ if [ ! -s "$INTEL" ]; then
     exit 1
 fi
 
-sort -u "$PENDING" -o "$PENDING"
-sort -u "$INTEL" -o "$INTEL"
+sort -u "$PENDING" > "${PENDING}.tmp.$$" && mv "${PENDING}.tmp.$$" "$PENDING"
+sort -u "$INTEL" > "${INTEL}.tmp.$$" && mv "${INTEL}.tmp.$$" "$INTEL"
 
-comm -12 "$PENDING" "$INTEL" > "$MATCHED"
-comm -23 "$PENDING" "$INTEL" > "$UNMATCHED"
+awk '
+FILENAME == ARGV[1] { a[$0]=1; next }
+($0 in a) { print }
+' "$PENDING" "$INTEL" > "$MATCHED"
+awk '
+FILENAME == ARGV[1] { a[$0]=1; next }
+!($0 in a) { print }
+' "$INTEL" "$PENDING" > "$UNMATCHED"
 
 echo "Pending:        $(wc -l < "$PENDING" | tr -d ' ')"
 echo "Firebog hit:   $(wc -l < "$MATCHED" | tr -d ' ')"

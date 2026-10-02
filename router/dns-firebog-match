@@ -9,8 +9,11 @@ OUT="$BASE/candidates-firebog.txt"
 [ -s "$CAND" ] || { : > "$OUT"; exit 0; }
 [ -s "$INTEL" ] || { echo "Missing $INTEL" >&2; exit 1; }
 
-sort -u "$CAND" -o "$CAND"
-sort -u "$INTEL" -o "$INTEL"
-comm -12 "$CAND" "$INTEL" > "$OUT"
+sort -u "$CAND" > "${CAND}.tmp.$$" && mv "${CAND}.tmp.$$" "$CAND"
+sort -u "$INTEL" > "${INTEL}.tmp.$$" && mv "${INTEL}.tmp.$$" "$INTEL"
+awk '
+FILENAME == ARGV[1] { a[$0]=1; next }
+($0 in a) { print }
+' "$CAND" "$INTEL" > "$OUT"
 
 echo "Firebog matched candidates: $(wc -l < "$OUT" | tr -d ' ')"

@@ -17,7 +17,7 @@ mkdir -p "$BASE"
 touch "$PENDING" "$BLOCK" "$ALLOW" "$IGNORED"
 
 normalize_domain() {
-    printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -e 's/^\*\.//' -e 's/\.$//'
+    printf '%s' "$1" | tr 'A-Z' 'a-z' | sed -e 's/^\*\.//' -e 's/\.$//'
 }
 
 remove_pending() {
@@ -38,7 +38,7 @@ case "${1:-}" in
         [ $# -eq 2 ] || { echo "Usage: dns-review block domain.com"; exit 1; }
         d="$(normalize_domain "$2")"
         printf '%s\n' "$d" >> "$BLOCK"
-        sort -u "$BLOCK" -o "$BLOCK"
+        sort -u "$BLOCK" > "${BLOCK}.tmp.$$" && mv "${BLOCK}.tmp.$$" "$BLOCK"
         remove_pending "$d"
         echo "BLOCK: $d"
         ;;
@@ -46,7 +46,7 @@ case "${1:-}" in
         [ $# -eq 2 ] || { echo "Usage: dns-review allow domain.com"; exit 1; }
         d="$(normalize_domain "$2")"
         printf '%s\n' "$d" >> "$ALLOW"
-        sort -u "$ALLOW" -o "$ALLOW"
+        sort -u "$ALLOW" > "${ALLOW}.tmp.$$" && mv "${ALLOW}.tmp.$$" "$ALLOW"
         remove_pending "$d"
         echo "ALLOW: $d"
         ;;
@@ -54,7 +54,7 @@ case "${1:-}" in
         [ $# -eq 2 ] || { echo "Usage: dns-review ignore domain.com"; exit 1; }
         d="$(normalize_domain "$2")"
         printf '%s\n' "$d" >> "$IGNORED"
-        sort -u "$IGNORED" -o "$IGNORED"
+        sort -u "$IGNORED" > "${IGNORED}.tmp.$$" && mv "${IGNORED}.tmp.$$" "$IGNORED"
         remove_pending "$d"
         echo "IGNORED: $d"
         ;;

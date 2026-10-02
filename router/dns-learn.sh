@@ -84,7 +84,7 @@ while :; do
     [ "$page" -lt 500 ] || { echo "Too many pages; aborting" >&2; exit 1; }
 done
 
-tr '[:upper:]' '[:lower:]' < "$WORK.domains" \
+tr 'A-Z' 'a-z' < "$WORK.domains" \
   | sed -e 's/^\*\.//' -e 's/\.$//' \
   | grep -E '^[a-z0-9][a-z0-9.-]*\.[a-z0-9-]+$' \
   | sort -u > "$WORK.clean" || true
@@ -92,18 +92,26 @@ tr '[:upper:]' '[:lower:]' < "$WORK.domains" \
 # Permanent history is what guarantees "never add a duplicate again".
 cat "$HISTORY" "$BLOCK" "$ALLOW" "$IGNORED" 2>/dev/null \
   | sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' \
-  | tr '[:upper:]' '[:lower:]' \
+  | tr 'A-Z' 'a-z' \
   | sed -e 's/^\*\.//' -e 's/\.$//' \
   | sort -u > "$WORK.known"
 
-comm -23 "$WORK.clean" "$WORK.known" > "$WORK.new" || true
+awk '
+FILENAME == ARGV[1] {
+    if ($0 != "") known[$0]=1
+    next
+}
+!($0 in known) {
+    print
+}
+' "$WORK.known" "$WORK.clean" > "$WORK.new"
 
 new_count=0
 if [ -s "$WORK.new" ]; then
     cat "$WORK.new" >> "$PENDING"
     cat "$WORK.new" >> "$HISTORY"
-    sort -u "$PENDING" -o "$PENDING"
-    sort -u "$HISTORY" -o "$HISTORY"
+    sort -u "$PENDING" > "${PENDING}.tmp.$$" && mv "${PENDING}.tmp.$$" "$PENDING"
+    sort -u "$HISTORY" > "${HISTORY}.tmp.$$" && mv "${HISTORY}.tmp.$$" "$HISTORY"
     new_count="$(wc -l < "$WORK.new" | tr -d ' ')"
 fi
 
