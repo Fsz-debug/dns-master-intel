@@ -5,17 +5,17 @@
   ],
   "source_stats": {
     "hagezi-pro": {
-      "parsed_domains": 223594,
-      "new_unique_domains": 223594
+      "parsed_domains": 225571,
+      "new_unique_domains": 225571
     },
     "hagezi-tif-mini": {
-      "parsed_domains": 194255,
-      "new_unique_domains": 126231
+      "parsed_domains": 189539,
+      "new_unique_domains": 121400
     }
   },
   "custom_block": 0,
   "custom_allow": 0,
   "removed_by_allow": 0,
-  "final_domains": 349825,
+  "final_domains": 346971,
   "errors": []
 }
